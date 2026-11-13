@@ -1,7 +1,7 @@
 # dsh-gitall v0.1.0：为 forge 面板接入 GitLab / Gitea / Gitee
 
 > 本文档是本次编码的真源：确定后直接照着它编码；节点编号在编码期间保持不变（提交信息用它指明完成到哪）。
-> 状态：`- [ ]` 未完成 / `- [x]` 已完成。一个最小节点完成 = 其下全部要点已勾选，且「完成判据」成立。
+> 状态：`- [x]` 未完成 / `- [x]` 已完成。一个最小节点完成 = 其下全部要点已勾选，且「完成判据」成立。
 
 ## 1 需求与范围
 
@@ -205,66 +205,90 @@ export function startBinding(ctx: Context): void
 
 #### 3.1.1 脚手架与构建链
 
-- [ ] 新建 `package.json`（`name: "dsh-gitall"`、`version: "0.1.0"`、`type: "module"`、`main: "lib/index.js"`、`exports`、`files: ["lib","cordis.patch.yml","README*.md"]`、`dsh.bundle.patch: "./cordis.patch.yml"`、peer/deps 如 §2）。
-- [ ] 新建 `tsconfig.json`、`tsconfig.build.json`、`.gitignore`、`cordis.patch.yml`、`src/index.ts` 占位（导出 `apply()` 空实现）。
-- [ ] `pnpm install` 成功，`pnpm build` 产出 `lib/index.js`。
+- [x] 新建 `package.json`（`name: "dsh-gitall"`、`version: "0.1.0"`、`type: "module"`、`main: "lib/index.js"`、`exports`、`files: ["lib","cordis.patch.yml","README*.md"]`、`dsh.bundle.patch: "./cordis.patch.yml"`、peer/deps 如 §2）。
+- [x] 新建 `tsconfig.json`、`tsconfig.build.json`、`.gitignore`、`cordis.patch.yml`、`src/index.ts` 占位（导出 `apply()` 空实现）。
+- [x] `pnpm install` 成功，`pnpm build` 产出 `lib/index.js`。
 - **完成判据**：`pnpm install && pnpm build` 通过。
 
 #### 3.1.2 CLI runner
 
-- [ ] `src/core/cli.ts`：`execa` 启动 `command`，`extendEnv: false` + `scrubbedParentEnv()`，附 `GH_PAGER=''` 类禁用项按平台补（`NO_COLOR=1`、`CLICOLOR='0'`、`GITEA_CLI_ERROR_FORMAT='json'` 可选）。
-- [ ] 超时、取消、`maxBuffer`、进程无法启动分别抛 `CliTimeoutError` / 透传 `signal.reason` / `CliOutputLimitError` / `CliUnavailableError`。
-- [ ] `test/core/cli.test.ts`：用 `node -e` 或临时脚本覆盖正常退出、非零退出、超时、输出超限、命令不存在。
+- [x] `src/core/cli.ts`：`execa` 启动 `command`，`extendEnv: false` + `scrubbedParentEnv()`，附 `GH_PAGER=''` 类禁用项按平台补（`NO_COLOR=1`、`CLICOLOR='0'`、`GITEA_CLI_ERROR_FORMAT='json'` 可选）。
+- [x] 超时、取消、`maxBuffer`、进程无法启动分别抛 `CliTimeoutError` / 透传 `signal.reason` / `CliOutputLimitError` / `CliUnavailableError`。
+- [x] `test/core/cli.test.ts`：用 `node -e` 或临时脚本覆盖正常退出、非零退出、超时、输出超限、命令不存在。
 - **完成判据**：`pnpm vitest run test/core/cli.test.ts` 通过。
 
 #### 3.1.3 JSON、快照与补丁工具
 
-- [ ] `src/core/json.ts`：`parseJson`/`asRecord`/`text`/`firstLine`/`failureOf`（`CliUnavailableError`→`unavailable`、超时→`unavailable`、输出超限→`too-large`、401/认证字样→`unauthenticated`）。
-- [ ] `src/core/snapshot.ts`：`snapshotOf()` 填满 §2 列出的默认区块；`checksRollupOf()` 处理空集与优先级。
-- [ ] `src/core/patch.ts`：`unifiedPatch()` 生成 `diff --git a/x b/x`、`--- a/x`、`+++ b/x`、原文 `@@` 段；新增文件 `--- /dev/null`，删除文件 `+++ /dev/null`。
-- [ ] 三个文件各配单测，覆盖空列表、单文件、改名、新增、删除。
+- [x] `src/core/json.ts`：`parseJson`/`asRecord`/`text`/`firstLine`/`failureOf`（`CliUnavailableError`→`unavailable`、超时→`unavailable`、输出超限→`too-large`、401/认证字样→`unauthenticated`）。
+- [x] `src/core/snapshot.ts`：`snapshotOf()` 填满 §2 列出的默认区块；`checksRollupOf()` 处理空集与优先级。
+- [x] `src/core/patch.ts`：`unifiedPatch()` 生成 `diff --git a/x b/x`、`--- a/x`、`+++ b/x`、原文 `@@` 段；新增文件 `--- /dev/null`，删除文件 `+++ /dev/null`。
+- [x] 三个文件各配单测，覆盖空列表、单文件、改名、新增、删除。
 - **完成判据**：`pnpm vitest run test/core` 通过。
 
 ### 3.2 三个 provider 与 binding（并行）
 
 #### 3.2.1 四个互不重叠的模块
 
-- [ ] **Agent A**：`src/providers/gitlab/{urls,read,write,provider}.ts` + `test/providers/gitlab.test.ts` — GitLab 全套（`glab`），含 `-/-/merge_requests/<iid>` URL 规则与嵌套 group 的 owner/name 拆分（依赖：§2 冻结签名）。
-- [ ] **Agent B**：`src/providers/gitea/{urls,read,write,provider}.ts` + `test/providers/gitea.test.ts` — Gitea/Forgejo（`gt`），`/pulls/<n>` URL 规则，`markReady` 返回 `failed`（Gitea 无 draft），`merge` 用 `gt api` + `head_commit_id`（依赖：§2 冻结签名）。
-- [ ] **Agent C**：`src/providers/gitee/{urls,read,write,provider}.ts` + `test/providers/gitee.test.ts` — Gitee（`gitee`），`/pulls/<n>` URL 规则，`checks` 恒空，`merge` 失败原因原样透传（依赖：§2 冻结签名）。
-- [ ] **Agent D**：`src/binding/{commands,service}.ts` + `test/binding/{commands,service}.test.ts` — 识别 `glab`/`gt`/`gitee` 命令字面量、从输出提取 http(s) URL（去尾标点）、经 `ctx.forge.changeRequestFromUrl()` 过滤后 `appendPluginRecord(session, 'plugin:forge-session/binding', { action: 'reference', url })`；同会话同 URL 只写一次（依赖：§2 冻结签名）。
+- [x] **Agent A**：`src/providers/gitlab/{urls,read,write,provider}.ts` + `test/providers/gitlab.test.ts` — GitLab 全套（`glab`），含 `-/-/merge_requests/<iid>` URL 规则与嵌套 group 的 owner/name 拆分（依赖：§2 冻结签名）。
+- [x] **Agent B**：`src/providers/gitea/{urls,read,write,provider}.ts` + `test/providers/gitea.test.ts` — Gitea/Forgejo（`gt`），`/pulls/<n>` URL 规则，`markReady` 返回 `failed`（Gitea 无 draft），`merge` 用 `gt api` + `head_commit_id`（依赖：§2 冻结签名）。
+- [x] **Agent C**：`src/providers/gitee/{urls,read,write,provider}.ts` + `test/providers/gitee.test.ts` — Gitee（`gitee`），`/pulls/<n>` URL 规则，`checks` 恒空，`merge` 失败原因原样透传（依赖：§2 冻结签名）。
+- [x] **Agent D**：`src/binding/{commands,service}.ts` + `test/binding/{commands,service}.test.ts` — 识别 `glab`/`gt`/`gitee` 命令字面量、从输出提取 http(s) URL（去尾标点）、经 `ctx.forge.changeRequestFromUrl()` 过滤后 `appendPluginRecord(session, 'plugin:forge-session/binding', { action: 'reference', url })`；同会话同 URL 只写一次（依赖：§2 冻结签名）。
 - **完成判据**：`pnpm vitest run test/providers test/binding` 通过；四个模块的写入范围无交集。
 
 ### 3.3 装配与集成
 
 #### 3.3.1 配置与插件入口
 
-- [ ] `src/config.ts`：schemastery `Config` + `resolveConfig()`（默认值见 §2，host 校验同 `forge-github` 的 HOST 正则，数值必须为正安全整数）。
-- [ ] `src/index.ts`：`apply()` 三次 `ctx.forge.register()`（顺序 gitlab → gitea → gitee），`binding === true` 时 `startBinding(ctx)`；CLI 不在 PATH 时不抛错（由 readiness 在运行时报告）。
-- [ ] `test/config.test.ts`：默认值、非法 host、非法数值、空 command。
+- [x] `src/config.ts`：schemastery `Config` + `resolveConfig()`（默认值见 §2，host 校验同 `forge-github` 的 HOST 正则，数值必须为正安全整数）。
+- [x] `src/index.ts`：`apply()` 三次 `ctx.forge.register()`（顺序 gitlab → gitea → gitee），`binding === true` 时 `startBinding(ctx)`；CLI 不在 PATH 时不抛错（由 readiness 在运行时报告）。
+- [x] `test/config.test.ts`：默认值、非法 host、非法数值、空 command。
 - **完成判据**：`pnpm build && pnpm vitest run test/config.test.ts` 通过。
 
 #### 3.3.2 假 CLI 集成测试
 
-- [ ] `test/integration/providers.test.ts`：在临时目录写三个可执行 shell 脚本（分别冒充 `glab`/`gt`/`gitee`），按参数返回录制 JSON（GitLab MR + diffs、Gitea PR + .diff + statuses、Gitee PR + files），用 `createCliRunner()` 走完整 provider 流程。
-- [ ] 覆盖三条链路：`fetch()` 得到快照、`diff()` 得到补丁、`merge()` 在 head 不匹配时返回 `stale`。
+- [x] `test/integration/providers.test.ts`：在临时目录写三个可执行 shell 脚本（分别冒充 `glab`/`gt`/`gitee`），按参数返回录制 JSON（GitLab MR + diffs、Gitea PR + .diff + statuses、Gitee PR + files），用 `createCliRunner()` 走完整 provider 流程。
+- [x] 覆盖三条链路：`fetch()` 得到快照、`diff()` 得到补丁、`merge()` 在 head 不匹配时返回 `stale`。
 - **完成判据**：`pnpm vitest run test/integration` 通过。
 
 ### 3.4 文档与验收
 
 #### 3.4.1 双语文档
 
-- [ ] `README.md` / `README.zh.md`：能力对照表（已支持 / 降级 / 不支持）、安装（`dsh plugin --profile <name> add dsh-gitall`）、配置示例（自建 GitLab/Gitea 的 hosts）、与 GitHub 的已知差异（无评审写入、Gitee 无 checks、登录提示走 `readiness.message`）。
-- [ ] 在 `AGENTS.md` 的「项目地图」补上目录树。
+- [x] `README.md` / `README.zh.md`：能力对照表（已支持 / 降级 / 不支持）、安装（`dsh plugin --profile <name> add dsh-gitall`）、配置示例（自建 GitLab/Gitea 的 hosts）、与 GitHub 的已知差异（无评审写入、Gitee 无 checks、登录提示走 `readiness.message`）。
+- [x] 在 `AGENTS.md` 的「项目地图」补上目录树。
 - **完成判据**：两份 README 内容一致，命令与 §2 表格逐条对齐。
 
 #### 3.4.2 人工验收（条件项）
 
-- [ ] 若本机装了任一 CLI：在对应平台的真实仓库安装并在面板确认「仓库识别 → 登录态 → MR 卡片 → diff → merge」。
-- [ ] 若未安装：以 §3.3.2 的录制 JSON + 假 CLI 结果作为验收依据，并在 README 标注「未做真机验证」。
+- [ ] 若本机装了任一 CLI：在对应平台的真实仓库安装并在面板确认「仓库识别 → 登录态 → MR 卡片 → diff → merge」。（本机未安装 `glab`/`gt`/`gitee`，未执行；改以 §3.3.2 的 fixture 路径验收）
+- [x] 若未安装：以 §3.3.2 的录制 JSON + 假 CLI 结果作为验收依据，并在 README 标注「未做真机验证」。
 - **完成判据**：验收清单逐项有结论（通过 / 以 fixture 替代）。
 
 ## 4 备注
 
 - 上游可提的建议（不在本包实现）：给 `ForgeProvider` 增加 `signInHint` / `authCommand` 字段，让 `ForgeTab` 的登录引导对非 GitHub forge 也能渲染命令，从而去掉 `readiness.message` 里手写命令的权宜做法。
 - 提交信息按 Conventional Commits 写，并在正文注明完成的节点编号（如 `feat(providers): add gitlab provider (3.2.1 Agent A)`）。
+
+## 5 实施记录（v0.1.0）
+
+- 实施日期：2026-11-13；分支：`feat/v0.1.0`。
+- 验证：`pnpm typecheck`、`pnpm build`、`pnpm test` 全部通过（11 个测试文件、93 个用例）。另外用
+  `dsh plugin --profile gitall-check add link:<repo>` + `dsh --profile gitall-check --dump-config`
+  验证了 `dsh.bundle.patch` 能被 profile 装载并合成出 `gitall` 条目（临时 profile 已删除）。
+- 事实核对：
+  - 三个 CLI 都有 `api` 透传。`gt` 1.x 另有 `--host`、`--no-input` 全局参数；`gitee` 有 `--no-tui`
+    全局参数。调用中已加入，避免交互与 TUI。
+  - `glab mr merge` 的 `--auto-merge` 默认为 true；实现里显式传 `--auto-merge=false`，否则流水线运行时会
+    变成「自动合并」而不是立即合并。
+  - `gitee api` 的字段只有字符串 `-f`（没有 `-F`）；合并接口无法携带 head，故 `merge()` 先读 head，
+    与请求不一致时返回 `stale`，其余失败原样透传。Gitee 在面板中只暴露 merge/squash，rebase 请求直接
+    `failed`。Gitee 的 markReady 用 `PATCH …/pulls/<n>` + `--body '{"draft":false}'`。
+  - Gitea 合并走 `gt api -X POST …/pulls/<n>/merge -f Do=<method> -f head_commit_id=<sha>`，与 §2 表格
+    一致；`markReady` 恒返回 `failed`（Gitea 没有草稿 PR）。
+  - Gitee 的增删行数取自 `/pulls/<n>/files` 每项的 `additions`/`deletions` 字段（Gitee 自己统计的
+    `+`/`-` 行数），不再逐行重算。
+- 与本文件的差异：
+  - `src/config.ts` 的 `Config` 内层改用可变输入类型 `ForgeSettingsInput`，解析结果仍是只读
+    `ForgeSettings`；`ForgeSettings` 的冻结签名未变（schemastery 的输出类型不接受只读数组）。
+  - 本环境无法创建 subagent，§3.2.1 的 Agent A–D 由主 agent 串行完成；四个模块的目录与测试边界仍保持
+    互不重叠。
