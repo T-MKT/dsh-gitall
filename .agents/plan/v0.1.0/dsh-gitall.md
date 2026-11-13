@@ -23,7 +23,6 @@
 - `gt` 是 Gitea 官方 CLI（1.0.0 起取代已归档的 `tea`），要求 Gitea 28+；Gitea 没有 draft 状态，`markReady` 只能返回 `failed`。
 - Gitee 的 PR 合并可能是多步流程；v1 只发一次合并请求，失败原因原样透传。
 - 本机当前**没有安装** `glab` / `gt` / `gitee`，端到端验证用假 CLI 脚本 + 录制 JSON，真机冒烟留作可选步骤。
-- 本目录已 `git init -b main`（空仓库，无提交），`.gitignore` 已忽略 `node_modules/`、`lib/`、`coverage/`、`.dsh-ops/`；首个提交在 `main` 上完成（新仓库、无提交，不违反主分支保护）。
 - 插件以 `dsh.bundle.patch` 形式安装：`package.json` 的 `dsh.bundle.patch` 指向自带 `cordis.patch.yml`，profile 用 `dsh plugin --profile <name> add dsh-gitall` 安装。
 
 ## 2 代码结构
