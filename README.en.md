@@ -11,7 +11,7 @@ configuration; the plugin never sees a token.
 ## Requirements
 
 - DeepSeek Harness `0.2.2-rc.2`.
-- Node.js 22 or newer.
+- Node.js 24.9 or newer.
 - A logged-in CLI for each platform you use:
   - [`glab`](https://gitlab.com/gitlab-org/cli) for GitLab
   - [`gt`](https://gitea.com/gitea/cli) for Gitea 28+ and Forgejo releases that ship the same API
