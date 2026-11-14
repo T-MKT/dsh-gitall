@@ -23,7 +23,7 @@ dsh-gitall/
 ├── tsconfig.build.json          # 只编译 src → lib
 ├── vitest.config.ts             # 测试入口
 ├── cordis.patch.yml             # 把本插件 insert 进 profile
-├── README.md / README.zh.md     # 中英双语文档
+├── README.md / README.en.md     # 中英双语文档
 ├── src/
 │   ├── index.ts                 # 插件入口：注册三个 provider 并启动 binding
 │   ├── config.ts                # schemastery Config + resolveConfig()
