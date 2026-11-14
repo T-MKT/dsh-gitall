@@ -9,7 +9,7 @@ CLI 自己的配置里，插件不会接触 token。
 
 ## 环境要求
 
-- DeepSeek Harness `0.2.2-rc.2`。
+- DeepSeek Harness `0.2.2-rc.3`。
 - Node.js 24.9 或更新版本。
 - 为要使用的平台准备已登录的 CLI：
   - GitLab：[`glab`](https://gitlab.com/gitlab-org/cli)

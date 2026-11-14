@@ -10,7 +10,7 @@ configuration; the plugin never sees a token.
 
 ## Requirements
 
-- DeepSeek Harness `0.2.2-rc.2`.
+- DeepSeek Harness `0.2.2-rc.3`.
 - Node.js 24.9 or newer.
 - A logged-in CLI for each platform you use:
   - [`glab`](https://gitlab.com/gitlab-org/cli) for GitLab
