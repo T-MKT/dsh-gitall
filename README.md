@@ -28,9 +28,10 @@ CLI 未安装不会导致插件启动失败：对应 provider 在 `readiness` �
 ### 通过 Github 安装
 
 ```sh
-dsh plugin --profile <name> add github:https://github.com/T-MKT/dsh-gitall
+dsh plugin --profile <name> add github:T-MKT/dsh-gitall
 ```
 
+仓库里已经带了编译产物 `lib/`，安装后即可直接启用（原因见[开发](#开发)）。
 
 ## 配置
 
@@ -140,6 +141,10 @@ pnpm build      # tsc -p tsconfig.build.json → lib/
 pnpm typecheck  # tsc -p tsconfig.json
 pnpm test       # vitest run
 ```
+
+`lib/` 是编译产物，**与源码一起提交**：插件经 `github:` 安装，而 pnpm 默认不执行 git
+依赖的构建脚本，仓库里缺 `lib/` 时 DSH 无法 `import` 插件。改动 `src/` 后运行
+`pnpm build` 并把 `lib/` 一并提交；CI 会校验两者是否一致。
 
 目录：`src/core` 放 CLI runner、JSON 助手、快照默认值与补丁合成；
 `src/providers/<forge>` 放 URL 解析、读取、写入与 provider 类；`src/binding`

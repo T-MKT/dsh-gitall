@@ -22,12 +22,15 @@ A missing CLI is not a startup error. The provider reports `unavailable` from
 
 ## Install
 
+### From GitHub
+
 ```sh
-dsh plugin --profile <name> add dsh-gitall
+dsh plugin --profile <name> add github:T-MKT/dsh-gitall
 ```
 
-The package ships `cordis.patch.yml`, which inserts the `gitall` entry into the
-profile.
+The repository carries the compiled `lib/` (see [Development](#development)), so
+the plugin can be enabled right after installation. The package ships
+`cordis.patch.yml`, which inserts the `gitall` entry into the profile.
 
 ## Configuration
 
@@ -145,6 +148,11 @@ pnpm build      # tsc -p tsconfig.build.json → lib/
 pnpm typecheck  # tsc -p tsconfig.json
 pnpm test       # vitest run
 ```
+
+`lib/` is build output, **committed with the sources**: the plugin is installed
+through `github:`, and pnpm does not run a Git dependency's build scripts by
+default, so a repository without `lib/` cannot be imported. Run `pnpm build`
+after changing `src/` and commit `lib/` with it; CI verifies the two match.
 
 Layout: `src/core` holds the CLI runner, JSON helpers, snapshot defaults, and
 patch assembly; `src/providers/<forge>` holds URL parsing, reads, writes, and
