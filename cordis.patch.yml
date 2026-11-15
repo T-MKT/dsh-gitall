@@ -1,0 +1,5 @@
+# Inserts dsh-gitall into a DSH profile. Configure hosts and CLI commands under
+# this entry; see README.md.
+- insert:
+    - id: gitall
+      name: dsh-gitall
