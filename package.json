@@ -1,7 +1,7 @@
 {
   "name": "dsh-gitall",
   "description": "GitLab, Gitea/Forgejo, and Gitee providers for the DeepSeek Harness change request panel",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
