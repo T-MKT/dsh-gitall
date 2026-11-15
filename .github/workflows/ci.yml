@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - "feat/**"
+      - "hotfix/**"
 
 permissions:
   contents: read
@@ -38,6 +39,14 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      - name: Check lib matches src
+        run: |
+          if [ -n "$(git status --porcelain -- lib)" ]; then
+            echo "lib/ is out of date: run pnpm build and commit lib/ with the change." >&2
+            git status --porcelain -- lib >&2
+            exit 1
+          fi
 
       - name: Typecheck
         run: pnpm typecheck
