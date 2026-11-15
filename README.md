@@ -1,6 +1,10 @@
-# dsh-gitall
+<div align="center">
+
+<h1>dsh-gitall</h1>
 
 [简体中文](./README.md) | [English](./README.en.md)
+
+</div>
 
 让 DeepSeek Harness 的变更请求面板支持 GitLab、Gitea/Forgejo 与 Gitee。这是一个
 **单包、host-only** 插件：向 `ctx.forge` 注册 `gitlab`、`gitea`、`gitee` 三个
@@ -21,11 +25,12 @@ CLI 未安装不会导致插件启动失败：对应 provider 在 `readiness` �
 
 ## 安装
 
+### 通过 Github 安装
+
 ```sh
-dsh plugin --profile <name> add dsh-gitall
+dsh plugin --profile <name> add github:https://github.com/T-MKT/dsh-gitall
 ```
 
-包内自带 `cordis.patch.yml`，会把 `gitall` 条目插入 profile。
 
 ## 配置
 
