@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - "feat/**"
+      - "hotfix/**"
 
 permissions:
   contents: read
